@@ -41,6 +41,14 @@ body{
 
 }
 
+.bullets{
+    display:flex;
+    flex-flow: row;
+    justify-items: center;
+    width: auto;
+    height: 100px;
+}
+
 /* CSS DO HOME */
 .topo{
     display: flex;
@@ -112,7 +120,7 @@ body{
 
 
 /* AJUSTANDO TABELAS */
-.container-listausuarios {
+.container-listausuarios, .container-listacliente, .container-listaproduto {
     display: flex;
     flex-flow: column;
     align-content: center;
@@ -120,11 +128,25 @@ body{
 
 }
 
+.container-listacliente form 
+{
+margin-top: 5px;
+display: flex;
+justify-content: center;
+flex-flow: row;
+background-color: white;
+width: auto;
+border-radius: 18px;
+}
+
 .lista{
+    display: flex;
+    flex-flow: row;
+    justify-content: center;
     background-color: #412a31;
     border-radius: 20px;
     border-collapse: collapse;
-    width: 100%;
+    width: auto;
     height: auto;
     
 }

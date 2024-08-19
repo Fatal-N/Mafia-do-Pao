@@ -1,6 +1,7 @@
 <?php
 
 include('conectadb.php');
+include('topo.php');
 
 // COLETA O VALOR id LÁ DA URL
 $id = $_GET['id'];
@@ -62,6 +63,7 @@ if($_SERVER['REQUEST_METHOD'] == 'POST' ){
             <input type="email" name="txtemail" placeholder="Digite seu email" value="<?=$email?>" required>
             <br>
          <!-- SELETOR DE ATIVO E INATIVO-->
+         <div class="bullets">
          <input type="radio" name="status" value ="1" <?= $status == "1"?"checked": ""?>>ATIVO
          <input type="radio" name="status" value ="0" <?= $status == "0"?"checked": ""?>>INATIVO
             <br>
