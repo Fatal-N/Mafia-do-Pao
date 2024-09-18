@@ -19,7 +19,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST')
     }
     else 
     {
-        $sql = "SELECT *FROM tb_clientes WHERE cli_status = '0'";
+        $sql = "SELECT * FROM tb_clientes WHERE cli_status = '0'";
         $retorno = mysqli_query($link, $sql);
     }
 }

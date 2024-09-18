@@ -45,7 +45,6 @@ CREATE TABLE tb_item_venda(
     iv_valortotal DECIMAL(10,2) NOT NULL,
     iv_quantidade DECIMAL (10,2) NOT NULL,
     iv_cod_iv VARCHAR(100) NOT NULL,
-    fk_cli_id INT NOT NULL,
     fk_pro_id INT NOT NULL
 );
 

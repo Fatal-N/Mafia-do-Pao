@@ -1,6 +1,7 @@
 <?php
 session_start();
 $nomeusuario = $_SESSION['nomeusuario'];
+$idusuario = $_SESSION['idusuario'];
 ?>
 
 <div class="topo">

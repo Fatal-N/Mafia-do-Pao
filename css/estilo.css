@@ -144,10 +144,11 @@ border-radius: 18px;
     flex-flow: row;
     justify-content: center;
     background-color: #412a31;
-    border-radius: 20px;
+    border-radius: 5px;
     border-collapse: collapse;
     width: auto;
     height: auto;
+    align-items: center;
     
 }
 td, tr, th{

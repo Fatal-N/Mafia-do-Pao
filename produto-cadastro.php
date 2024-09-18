@@ -49,6 +49,7 @@ if($_SERVER['REQUEST_METHOD'] == 'POST')
     <title>CADASTRA PRODUTOS</title>
 </head>
 <body>
+<a href="backoffice.php"><img src="icons/Navigation-left-01-256.png" width="16" height="16"></a>
     <div class = "container-global">
         <form class="formulario" action="produto-cadastro.php" method="post" enctype="multipart/form-data">
         <label>Nome Produto</label>

@@ -41,7 +41,9 @@ $nomeusuario = $_SESSION['nomeusuario'];
             <a href="cliente-cadastro.php"><span class="tooltiptext">Cadastro Clientes</span><img src="./icons/customer.png" heigth= 200px width= 200px></a>
             <a href="cliente-lista.php"><span class="tooltiptext">Listar Cliente</span><img src="./icons/people.png"></a>
             <a href="vendas.php"><span class="tooltiptext">Vendas</span><img src="./icons/shopping-cart-02.png"  heigth= 200px width= 200px></a>
-        
+            <a href="vendas-lista.php"><span class="tooltiptext">Listar Vendas</span><img src="./icons/sales-order.png"  heigth= 200px width= 200px></a>
+            <a href="cupom-cadastro.php"><span class="tooltiptext">Cadastro Cupons</span><img src="./icons/money.png"  heigth= 200px width= 200px></a>
+            <a href="cupom-lista.php"><span class="tooltiptext">Listar Cupons</span><img src="./icons/money-credit-card.png"  heigth= 200px width= 200px></a>
          </div>
     </div>
     

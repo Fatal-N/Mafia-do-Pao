@@ -50,7 +50,7 @@ if($_SERVER['REQUEST_METHOD'] == 'POST' ){
 </head>
 <body>
     <div class="container-global">
-    <a href="usuario-lista.php"><img src="icons/Navigation-left-01-256.png" width="16" height="16"></a>
+    <a href="usuario-lista.php"><img src="../icons/Navigation-left-01-256.png" width="16" height="16"></a>
 
     <form class="formulario" action="cliente-altera.php" method="post">
             <input type="hidden" name="id" value="<?=$id?>">
