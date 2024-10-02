@@ -4,45 +4,75 @@ include("topo.php");
 
 
 //Verificação do Post
-if ($_SERVER['REQUEST_METHOD'] == 'POST'){
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $produto = $_POST['produto'];
     //QUEBRAR A VARIÁVEL PRODUTO EM 3 OUTRAS VARIÁVEIS
     list($idproduto, $nomeproduto, $valorproduto) = explode(',', $produto);
     $qtditem = $_POST['qtditem'];
-    //CALCULAR O VALOR OS ITENS
-    $valorlista = $valorproduto * $_POST['qtditem'];
 
-    //VERFICAR SE O CARRINHO ESTÁ ABERTO OU NÃO
-    $sql = "SELECT COUNT(iv_status) FROM tb_item_venda WHERE iv_status = 1";
-    $retorno = mysqli_query($link, $sql);
+    #Verificando se tem produto no estoque
+    $sqlcontarproduto = "SELECT pro_quantidade FROM tb_produtos WHERE pro_id = $idproduto";
+    $retornocontagem = mysqli_query($link, $sqlcontarproduto);
+    while ($tblcontagem = mysqli_fetch_array($retornocontagem)) {
+        $contagem = $tblcontagem[0];
+    }
+    if ($qtditem > $contagem) {
+        echo "<script>window.alert('QUANTIDADE INSUFICIENTE NO ESTOQUE! QNTD ATUAL: $contagem')</script>";
+        echo "<script>window.location.href='vendas.php'</script>";
+    } else {
 
-    while ($tbl = mysqli_fetch_array($retorno)) {
-        $cont = $tbl[0];
 
 
-        //SE NÃO EXISTIR CARRINHO ABERTO, CRIA UM NOVO
-        if ($cont == 0) {
-            //CRIA O CODIGO ITEM_VENDA
-            $codigo_itemvenda = md5(rand(1, 999999) . date('h:i:s'));
 
-            //INSERINDO O ITEM NA VENDA
-        $sqlitem = "INSERT INTO tb_item_venda(iv_valortotal, iv_quantidade, iv_cod_iv, fk_pro_id, iv_status)
+
+
+
+        //CALCULAR O VALOR OS ITENS
+        $valorlista = $valorproduto * $_POST['qtditem'];
+
+        //VERFICAR SE O CARRINHO ESTÁ ABERTO OU NÃO
+        $sql = "SELECT COUNT(iv_status) FROM tb_item_venda WHERE iv_status = 1";
+        $retorno = mysqli_query($link, $sql);
+
+        while ($tbl = mysqli_fetch_array($retorno)) {
+            $cont = $tbl[0];
+
+
+            //SE NÃO EXISTIR CARRINHO ABERTO, CRIA UM NOVO
+            if ($cont == 0) {
+                //CRIA O CODIGO ITEM_VENDA
+                $codigo_itemvenda = md5(rand(1, 999999) . date('h:i:s'));
+
+                //INSERINDO O ITEM NA VENDA
+                $sqlitem = "INSERT INTO tb_item_venda(iv_valortotal, iv_quantidade, iv_cod_iv, fk_pro_id, iv_status)
         VALUES ($valorlista,$qtditem,'$codigo_itemvenda',$idproduto,'1')";
-        mysqli_query($link, $sqlitem);
-        } else { //Se o carrinho ja existe, retorna o numero iv_cpd_iv ativo e insere mais itens na venda
-            $sql = "SELECT iv_cod_iv FROM tb_item_venda WHERE iv_status = 1";
-            $carrinhoaberto = mysqli_query($link, $sql);
-            $tbl = mysqli_fetch_array($carrinhoaberto);
-            $codigo_itemvenda_ok = $tbl[0];
-            //INSERINDO O ITEM NA VENDA
-            $sqlitem = "INSERT INTO tb_item_venda(iv_valortotal, iv_quantidade, iv_cod_iv, fk_pro_id, iv_status)
+                mysqli_query($link, $sqlitem);
+            } else { //Se o carrinho ja existe, retorna o numero iv_cpd_iv ativo e insere mais itens na venda
+                //VERIFICAÇÃO SOBRE ADICIONAR MAIS ITENS, SE EXISTE NO ESTOQUE
+                $sqlcontarproduto2 = "SELECT SUM(iv_quantidade) FROM tb_item_venda WHERE fk_pro_id = $idproduto AND iv_status = 1";
+                $retornopro = mysqli_query($link, $sqlcontarproduto2);
+                while ($tblpro = mysqli_fetch_array($retornopro)) {
+                    $proadd = $tblpro[0];
+                }
+                if (($proadd + $qtditem) > $contagem) {
+                    $contagem2 = $contagem - $qtditem;
+                    echo "<script>window.alert('QUANTIDADE INSUFICIENTE NO ESTOQUE! QNTD ATUAL: $contagem2')</script>";
+                    echo "<script>window.location.href='vendas.php'</script>";
+                }
+                else{//
+                $sql = "SELECT iv_cod_iv FROM tb_item_venda WHERE iv_status = 1";
+                $carrinhoaberto = mysqli_query($link, $sql);
+                $tbl = mysqli_fetch_array($carrinhoaberto);
+                $codigo_itemvenda_ok = $tbl[0];
+                //INSERINDO O ITEM NA VENDA
+                $sqlitem = "INSERT INTO tb_item_venda(iv_valortotal, iv_quantidade, iv_cod_iv, fk_pro_id, iv_status)
          VALUES ($valorlista,$qtditem,'$codigo_itemvenda_ok',$idproduto,'1')";
-            mysqli_query($link, $sqlitem);
-
+                mysqli_query($link, $sqlitem);
+                }//
+            }
         }
     }
 }
-
 #SELEÇÃO DE ITEM
 $sqlpro = "SELECT * FROM tb_produtos";
 $retornopro = mysqli_query($link, $sqlpro);
@@ -79,6 +109,7 @@ $retornolistapro = mysqli_query($link, $sqllistapro);
     <title>VENDAS</title>
 </head>
 <a href="backoffice.php"><img src="icons/Navigation-left-01-256.png" width="16" height="16"></a>
+
 <body>
     <div class="container-global">
         <form class="formulario" action="vendas.php" method="post">
@@ -97,68 +128,73 @@ $retornolistapro = mysqli_query($link, $sqllistapro);
             </select>
             <br>
             <label>QUANTIDADE</label>
-            <input type='decimal' name = "qtditem">
+            <input type='number' name="qtditem" step="0.01" min="0" required
+                oninput="this.value.replace(/[^0-9]/g, '');">
+            <!-- Isso impede que coloque número <0 e caracteres sem ser numericos-->
             <br>
-            <input type='submit' value = "CONFIRMAR">
+            <input type='submit' value="CONFIRMAR">
             <br>
         </form>
-        </div>
-        <br>
-        <div class="container-listaproduto">
-            <table class="lista">
-                <tr>
-                    <th>ID</th>
-                    <th>NOME PRODUTO</th>
-                    <th>VALOR UN.</th>
-                    <th>QUANTIDADE</th>
-                    <th>IMAGEM</th>
-                    <th>DELETAR</th>
-                </tr>
-                <?php
-                while($tbl=mysqli_fetch_array($retornolistapro)){
+    </div>
+    <br>
+    <div class="container-listaproduto">
+        <table class="lista">
+            <tr>
+                <th>ID</th>
+                <th>NOME PRODUTO</th>
+                <th>VALOR UN.</th>
+                <th>QUANTIDADE</th>
+                <th>IMAGEM</th>
+                <th>DELETAR</th>
+            </tr>
+            <?php
+            while ($tbl = mysqli_fetch_array($retornolistapro)) {
                 ?>
                 <tr>
-                <td><?=$tbl[0]?></td> <!-- COLETA ID -->
-                <td><?=$tbl[1]?></td> <!-- COLETA NOME -->
-                <td><?=$tbl[3]?></td> <!-- COLETA QTD -->
-                <td><?=$tbl[4]?></td> <!-- COLETA VALOR UNITARIO -->
-                <td><img src='data:image/jpeg;base64,<?=$tbl[2]?>' width="200" height="200"></td> <!-- COLETA IMAGEM -->
-                <td><a href="venda-deleta-item.php?id=<?$tbl[6]?>">
-                    <input type="button" value="EXCLUIR">
-                </a>
-                </td>
+                    <td><?= $tbl[0] ?></td> <!-- COLETA ID -->
+                    <td><?= $tbl[1] ?></td> <!-- COLETA NOME -->
+                    <td><?= $tbl[3] ?></td> <!-- COLETA QTD -->
+                    <td><?= $tbl[4] ?></td> <!-- COLETA VALOR UNITARIO -->
+                    <td><img src='data:image/jpeg;base64,<?= $tbl[2] ?>' width="200" height="200"></td>
+                    <!-- COLETA IMAGEM -->
+                    <td><a href='venda-deleta-item.php?id=<?= $tbl[6] ?>'>
+                            <input type="button" value="EXCLUIR">
+                        </a>
+                    </td>
                 </tr>
                 <?php
-                }
-                ?>
-             </table>
-        </div>
-    
-     <!-- FORMULÁRIO FINAL DE NOME E ENVIO -->
-      <div class="container-global">
+            }
+            ?>
+        </table>
+    </div>
+
+    <!-- FORMULÁRIO FINAL DE NOME E ENVIO -->
+    <div class="container-global">
         <form class="formulario" action="vendas-finalizar.php" method="POST">
+            <label>CUPOM</label>
+            <input type="text" id="codigo" name='codigo' placeholder="digite o codigo do cupom" maxlength="14">
+            <br>
             <label>SELECIONE O CLIENTE</label>
             <select name="nomecliente">
                 <!-- PUXA O NOME DOS CLIENTES -->
-                 <?php while ($tblcli=mysqli_fetch_array($retornocli)) {
+                <?php while ($tblcli = mysqli_fetch_array($retornocli)) {
                     ?>
-                    <option value="<?=$tblcli[0]?>">
-                    <?=strtoupper($tblcli[1])?>
+                    <option value="<?= $tblcli[0] ?>">
+                        <?= strtoupper($tblcli[1]) ?>
                     </option>
-                <?php
-                 }
-                 ?>
+                    <?php
+                }
+                ?>
             </select>
             <label>VALOR TOTAL</label>
-             <!-- SELECT PARA RETORNAR A SOMA DO VALOR TOTAL -->
-              <?php $valortotal ="SELECT SUM(iv_valortotal) FROM tb_item_venda WHERE iv_status = 1";
-              $retornovalortotal = mysqli_query($link, $valortotal);
-              while ($tblvalortotal=mysqli_fetch_array($retornovalortotal)) {
-                echo"R$" . $tblvalortotal[0];
-              }?>
-              <input type="submit" value="CONFIRMAR">
+            <!-- SELECT PARA RETORNAR A SOMA DO VALOR TOTAL -->
+            <?php $valortotal = "SELECT SUM(iv_valortotal) FROM tb_item_venda WHERE iv_status = 1";
+            $retornovalortotal = mysqli_query($link, $valortotal);
+            while ($tblvalortotal = mysqli_fetch_array($retornovalortotal)) {
+                echo "R$" . $tblvalortotal[0];
+            } ?>
+            <input type="submit" value="CONFIRMAR">
         </form>
     </div>
 </body>
-
 </html>

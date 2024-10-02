@@ -7,14 +7,6 @@ if($_SERVER['REQUEST_METHOD']== 'POST'){
     $login = $_POST['txtlogin'];
     $senha = $_POST['txtsenha'];
 
-    //VERIFICAÇÃO DO MD5(TEMPERO)
-    $sqltempero = "SELECT tempero FROM tb_usuarios
-    WHERE usu_login = '$login' AND usu_status = '1'";
-    $retornotempero = mysqli_query($link, $sqltempero);
-    if($retornotempero && mysqli_num_rows($retornotempero) > 0){ //Verifica se o usuario existe
-        $tempero = mysqli_fetch_array($retornotempero)[0];
-        $senha = md5($tempero . $senha); //criptografa a senha
-    }
     // COMEÇA VALIDAR BANCO DE DADOS
     $sql = "SELECT COUNT(usu_id) FROM tb_usuarios
     WHERE usu_login = '$login' AND usu_senha = '$senha' AND
@@ -22,18 +14,21 @@ if($_SERVER['REQUEST_METHOD']== 'POST'){
     // RETORNO DO BANCO
     $retorno = mysqli_query($link, $sql);
 
+  
+
     $contagem = mysqli_fetch_array($retorno) [0];
 
     // VERIFICA SE NATAN EXISTE
     if($contagem == 1){
-        $sql = "SELECT usu_id, usu_login FROM tb_usuarios
-        WHERE usu_login = '$login'AND usu_senha = '$senha'";
+        $sql="SELECT usu_id, usu_login FROM tb_usuarios WHERE usu_login = '$login' AND usu_senha = '$senha'";
         $retorno = mysqli_query($link, $sql);
         //RETORNANDO O NOME DO NATAN + ID DELE
-        while($tbl = mysqli_fetch_array($retorno)){
+        while ($tbl = mysqli_fetch_array($retorno)){
             $_SESSION['idusuario'] = $tbl[0];
             $_SESSION['nomeusuario'] = $tbl[1];
         }
+
+
         echo"<script>window.location.href='backoffice.php';</script>";
     }
     else{
@@ -68,8 +63,6 @@ if($_SERVER['REQUEST_METHOD']== 'POST'){
             <br>
             <br>
             <input type="submit" value="ACESSAR">
-            <br>
-            <a href="recuperasenha.php"> ESQUECI MINHA SENHA </a>
     </form>
 
     </div>

@@ -15,11 +15,7 @@ while ($tbl = mysqli_fetch_array($retorno)){
     $status = $tbl[5];
     $imagem = $tbl[6];
 }
-
-
 ?>
-
-
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
@@ -29,12 +25,13 @@ while ($tbl = mysqli_fetch_array($retorno)){
     <link href="https://fonts.cdnfonts.com/css/curely" rel="stylesheet">
     <link href="https://fonts.cdnfonts.com/css/thebakery" rel="stylesheet">
                 
-    <title>Alteração do Cliente</title>
+    <title>Alteração do Produto</title>
+
 </head>
 <body>
+    
     <div class="container-global">
     <a href="produto-lista.php"><img src="icons/Navigation-left-01-256.png" width="16" height="16"></a>
-
     <form class="formulario" action="produto-altera.php" method="post" enctype="multipart/form-data">
     <label>Nome Produto</label>
             <input type="text" name="txtnome" placeholder="Digite o Nome do Produto" value = "<?= $nomeproduto?>"required>

@@ -42,7 +42,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 echo $datafinal;
 
-    $sql = "SELECT v.ven_id, v.ven_datavenda, v.ven_totalvenda, v.fk_cli_id, v.fk_usu_id, c.cli_nome, u.usu_login 
+    $sql = "SELECT v.ven_id, v.ven_datavenda, v.ven_totalvenda, v.fk_cli_id, v.fk_usu_id, c.cli_nome, u.usu_login, v.fk_iv_cod_iv  
     FROM tb_venda v
     JOIN
     tb_clientes c ON v.fk_cli_id = c.cli_id
@@ -69,7 +69,7 @@ echo $datafinal;
         $retornovalortotal = mysqli_query($link, $valortotal);
     }
 } else {
-    $sql = "SELECT v.ven_id, v.ven_datavenda, v.ven_totalvenda, v.fk_cli_id, v.fk_usu_id, c.cli_nome, u.usu_login 
+    $sql = "SELECT v.ven_id, v.ven_datavenda, v.ven_totalvenda, v.fk_cli_id, v.fk_usu_id, c.cli_nome, u.usu_login, v.fk_iv_cod_iv 
     FROM tb_venda v
     JOIN
     tb_clientes c ON v.fk_cli_id = c.cli_id
@@ -148,7 +148,7 @@ echo $datafinal;
                     <td><?= $tbl[2] ?></td> 
                     <td><?= $tbl[5] ?></td> 
                     <td><?= $tbl[6] ?></td> 
-                <td><a href="vendas-visualizar.php?id=<?=$tbl[3]?>">
+                <td><a href="vendas-visualizar.php?id=<?=$tbl[7]?>">
                 <input type="button" value="VISUALIZAR">
                 </a>
                 </td>
